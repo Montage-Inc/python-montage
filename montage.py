@@ -5,6 +5,8 @@ import copy
 import requests
 from cached_property import cached_property
 
+__version__ = '1.0.0'
+
 
 class MontageAPI(object):
     domain = 'dev.montagehot.club'
@@ -34,22 +36,31 @@ class MontageAPI(object):
             endpoint=endpoint,
         )
 
+    def get_headers(self):
+        headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'User-Agent': 'Montage Python v{0}'.format(__version__),
+        }
+        if self.token:
+            headers['Authorization'] = 'Token {0}'.format(self.token),
+        return headers
+
     def request(self, url, method=None, **kwargs):
         method = method or 'get'
 
         headers = kwargs.pop('headers', {})
-        headers['Accept'] = 'application/json'
-        headers['Content-Type'] = 'application/json'
-        headers['User-Agent'] = 'Montage Python v1'
-        if self.token:
-            headers['Authorization'] = 'Token {0}'.format(self.token),
+        headers.update(self.get_headers())
 
-        response = requests.get(method, url, headers=headers, **kwargs)
+        response = requests.request(method, url, headers=headers, **kwargs)
         return response.json()
 
     def authenticate(self, email, password):
-        url = self.url('auth', email=email, password=password)
-        response = self.request(url)
+        url = self.url('auth')
+        response = self.request(url, data={
+            'username': email,
+            'password': password
+        })
         self.token = response.get('data', {}).get('token')
         if self.token is None:
             return False
@@ -106,8 +117,10 @@ class Query(object):
         self.descriptor = self.QueryDescriptor(**kwargs)
 
     def __iter__(self):
+        # Use a session to keep the connection open
+        session = requests.Session(headers=self.get_headers())
         url = self.api.url('document-query', schema=self.schema.name)
-        response = self.api.request(url, 'post', json=self.descriptor._asdict())
+        response = session.post(url, json=self.descriptor._asdict())
 
         # Yield the initial result set
         for document in response['data']:
@@ -116,12 +129,14 @@ class Query(object):
         # Keep fetching results until we hit the end of the cursor
         while response['cursors']['next']:
             url = self.api.url('document-query', schema=self.schema.name)
-            response = self.api.request(url, params={
+            response = session.get(url, params={
                 'cursor': response['cursors']['next']
             })
 
             for document in response['data']:
                 yield document
+
+        session.close()
 
     def clone(self, **kwargs):
         descriptor = copy.deepcopy(self.descriptor._asdict())

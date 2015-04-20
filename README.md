@@ -8,7 +8,7 @@ Usage
 
 ```
 >>> from montage import MontageAPI
->>> montage = MontageAPI(token=None)
+>>> montage = MontageAPI(subdomain[, token])
 >>> montage.authenticate(email, password)  # sets self.token
 
 # Schemas
