@@ -90,7 +90,7 @@ class Documents(object):
 
     def save(self, *documents):
         data = documents[0] if len(documents) == 1 else documents
-        url = self.api.url('document-save', schema=self.name)
+        url = self.api.url('document-save', schema=self.schema.name)
         return self.api.request(url, 'post', json=data)
 
     def get(self, document_id):
