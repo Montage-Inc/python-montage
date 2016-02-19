@@ -3,13 +3,7 @@ import unittest
 
 import montage
 
-__all__ = ('MontageTests', 'make_response', 'SCHEMAS', 'FILES')
-
-
-class MontageTests(unittest.TestCase):
-    def setUp(self):
-        self.client = montage.Client('testco', url='hexxie.com')
-        super(MontageTests, self).setUp()
+__all__ = ('MontageTests', 'make_response', 'USER', 'SCHEMAS', 'FILES')
 
 
 def make_response(data):
@@ -82,3 +76,9 @@ FILES = [{
     'url': '/storage/da51fc54-92a5-49bc-99c3-441c5fff81b5/2016/07/django-project_Gu46E7m.gif',
     'checksum': 'b7e23ec29af22b0b4e41da31e868d57226121c84'
 }]
+
+
+class MontageTests(unittest.TestCase):
+    def setUp(self):
+        self.client = montage.Client('testco', token=USER['token'], url='hexxie.com')
+        super(MontageTests, self).setUp()

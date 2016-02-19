@@ -4,7 +4,7 @@ import responses
 from .utils import MontageTests, make_response, USER
 
 
-class QueryTests(MontageTests):
+class ClientTests(MontageTests):
     def test_url(self):
         url1 = 'https://testco.hexxie.com/api/v1/auth/user/'
         url2 = self.client.url('auth/user')
@@ -16,12 +16,25 @@ class QueryTests(MontageTests):
         responses.add(responses.POST, endpoint, body=make_response(USER),
             content_type='application/json')
 
-        self.client.authenticate('test@example.com', 'letmein')
+        client = montage.Client('testco', url='hexxie.com')
+
+        assert client.token is None
+
+        client.authenticate('test@example.com', 'letmein')
 
         assert self.client.token == USER['token']
 
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
+    @responses.activate
     def test_user(self):
-        pass
+        endpoint = 'https://testco.hexxie.com/api/v1/auth/user/'
+        responses.add(responses.GET, endpoint, body=make_response(USER),
+            content_type='application/json')
+
+        response = self.client.user()
+        assert response['data'] == USER
+
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
