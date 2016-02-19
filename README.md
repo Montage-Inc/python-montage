@@ -9,17 +9,18 @@ Usage
 ```
 >>> import montage
 >>> client = montage.Client(subdomain[, token])
->>> client.user.authenticate(email, password)  # sets client.token
+>>> client.authenticate(email, password)  # sets client.token
+>>> client.user()
 
 # Users
 >>> client.user.info()
 
 # Schemas
 >>> client.schemas.all()
->>> client.schemas.get('schema_name')
+>>> client.schemas.get('schema')
 
 # Data
->>> query = montage.Query('schema_name')
+>>> query = montage.Query('schema')
 >>> query = query.filter(**kwargs)
 >>> query = query.limit(10)
 >>> query = query.skip(10)
@@ -28,9 +29,9 @@ Usage
 >>> client.data.query(query)
 >>> client.data.query(q1=query1, q2=query2)
 
->>> client.data.save(*documents)
->>> client.data.get(document_id)
->>> client.data.delete(document_id)
+>>> client.data.save(schema, *documents)
+>>> client.data.get(schema, document_id)
+>>> client.data.delete(schema, document_id)
 
 # Files
 >>> client.files.all()

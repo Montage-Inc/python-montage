@@ -5,6 +5,7 @@ import requests
 from . import __version__
 from .compat import urljoin
 from .encoder import SmartJSONEncoder
+from .errors import HttpError
 
 __all__ = ('APIRequestor',)
 
@@ -31,6 +32,7 @@ class APIRequestor(object):
 
     def get_headers(self):
         headers = {
+            'Accept': 'application/json'
             'Content-Type': 'application/json',
             'User-Agent': USER_AGENT,
         }
@@ -54,8 +56,8 @@ class APIRequestor(object):
 
         response = requests.request(method, url, headers=headers, **kwargs)
 
-        # if response.status_code != 200:
-        #     raise HttpError(response.status_code, response)
+        if response.status_code != 200:
+            raise HttpError(response.status_code, response.json())
 
         return response.json()
 

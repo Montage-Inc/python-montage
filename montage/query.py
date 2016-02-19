@@ -10,6 +10,12 @@ class Query(object):
         query.terms.extend(copy.deepcopy(self.terms))
         return query
 
+    def as_dict(self):
+        return {
+            '$schema': self.schema,
+            '$query': copy.deepcopy(self.terms)
+        }
+
     def get(self, id):
         self.terms.append(['$get', id])
         return self._clone()
