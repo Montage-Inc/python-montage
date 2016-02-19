@@ -28,5 +28,8 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     packages=find_packages(),
-    install_requires=['requests', 'cached_property'],
+    install_requires=[
+        'cached_property==1.3.0',
+        'requests==2.9.1',
+    ],
 )
