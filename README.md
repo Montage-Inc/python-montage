@@ -7,31 +7,34 @@ Usage
 -----
 
 ```
->>> from montage import MontageAPI
->>> montage = MontageAPI(subdomain[, token])
->>> montage.authenticate(email, password)  # sets self.token
+>>> import montage
+>>> client = montage.Client(subdomain[, token])
+>>> client.user.authenticate(email, password)  # sets client.token
+
+# Users
+>>> client.user.info()
 
 # Schemas
->>> schema = montage.schema('foo')
->>> schema.detail()
->>> schema.alter()  # Someday...
+>>> client.schemas.all()
+>>> client.schemas.get('schema_name')
 
-# Documents
->>> query = schema.documents.query()  # Effectively, fetch all
+# Data
+>>> query = montage.Query('schema_name')
 >>> query = query.filter(**kwargs)
->>> query = query.limit(0)
->>> query = query.offset(0)
+>>> query = query.limit(10)
+>>> query = query.skip(10)
 >>> query = query.order_by(field[, ordering=asc|desc])
->>> for document in query:
-...     print document['id']
 
->>> schema.documents.save(*documents)
->>> schema.documents.detail(document_id)
->>> schema.documents.delete(document_id)
+>>> client.data.query(query)
+>>> client.data.query(q1=query1, q2=query2)
+
+>>> client.data.save(*documents)
+>>> client.data.get(document_id)
+>>> client.data.delete(document_id)
 
 # Files
->>> montage.files.list()
->>> montage.files.upload(*files)
->>> montage.files.detail(file_id)
->>> montage.files.delete(file_id)
+>>> client.files.all()
+>>> client.files.save(*files)
+>>> client.files.get(file_id)
+>>> client.files.delete(file_id)
 ```
