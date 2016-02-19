@@ -16,6 +16,13 @@ def make_response(data):
     return json.dumps({'data': data})
 
 
+USER = {
+    'name': 'Joe McTest',
+    'email': 'test@example.com',
+    'token': 'f47d2208-1b24-4c65-afb8-4a9ed02b68ac',
+}
+
+
 SCHEMAS = [{
     'id': 'c449d88b-7eec-4c23-ba87-45057735f561',
     'name': 'movies',
