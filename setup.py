@@ -14,6 +14,7 @@ setup(
     author='Derek Payton',
     author_email='dpayton@mntge.com',
     description='Python bindings for Montage',
+    long_description=open('./README.rst', 'r').read(),
     keywords='data',
     license='MIT',
     url='https://github.com/EditLLC/python-montage',
