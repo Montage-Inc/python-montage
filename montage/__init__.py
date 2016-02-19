@@ -1,4 +1,4 @@
-__author__ = 'Derek Payton <derek.payton@gmail.com>'
+__author__ = 'Derek Payton <dpayton@mntge.com>'
 __copyright__ = 'Copyright (c) Montage, Inc'
 __description__ = 'Python bindings for Montage'
 __version__ = '2.0.0'

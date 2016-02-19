@@ -1,3 +1,4 @@
+import mimetypes
 
 __all__ = ('DataAPI', 'FileAPI', 'SchemaAPI')
 

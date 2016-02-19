@@ -34,7 +34,6 @@ class APIRequestor(object):
     def get_headers(self):
         headers = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
             'User-Agent': USER_AGENT,
         }
 
@@ -52,15 +51,26 @@ class APIRequestor(object):
         data = kwargs.pop('json', None)
         if data:
             kwargs['data'] = json.dumps(data, cls=SmartJSONEncoder)
+            headers['Content-Type'] = 'application/json'
 
         kwargs.setdefault('timeout', 10)
 
         response = requests.request(method, url, headers=headers, **kwargs)
 
-        if response.status_code != 200:
-            raise HttpError(response.status_code, response.json())
+        # Authorization failed or not provided.
+        if response.status_code == 401:
+            raise AuthenticationError(response['errors'][0]['detail'])
 
-        return response.json()
+        # Non-2xx responses get an HttpError.
+        if not (200 <= response.status_code <= 299):
+            if response.headers['Content-Type'] == 'application/json':
+                raise HttpError(response.status_code, response.json()['errors'][0]['detail'])
+            raise HttpError(response.status_code, response.text)
+
+        # Success! Return the response content as JSON or text as needed.
+        if response.headers['Content-Type'] == 'application/json':
+            return response.json()
+        return response.text
 
     def get(self, url, **kwargs):
         return self.request(url, method='get', **kwargs)
