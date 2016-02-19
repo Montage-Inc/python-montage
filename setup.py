@@ -28,7 +28,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     install_requires=[
         'cached_property==1.3.0',
         'requests==2.9.1',
