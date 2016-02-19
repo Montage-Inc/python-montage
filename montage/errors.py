@@ -1,4 +1,6 @@
 
+__all__ = ('MontageError', 'HttpError')
+
 
 class MontageError(Exception):
     pass

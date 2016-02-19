@@ -7,6 +7,8 @@ from .api import DataAPI, FileAPI, SchemaAPI
 from .compat import urljoin
 from .requestor import APIRequestor
 
+__all__ = ('Client', 'client')
+
 BASE_URL = 'mntge.com'
 
 
@@ -20,10 +22,13 @@ class Client(object):
         return requestor.request(self.url(endpoint), method, **kwargs)
 
     def url(self, endpoint):
-        return 'https://{domain}/api/v1/{endpoint}/'.format(self.domain, endpoint)
+        return 'https://{domain}/api/v1/{endpoint}/'.format(
+            domain=self.domain,
+            endpoint=endpoint
+        )
 
     def authenticate(self, email, password):
-        response = self.request('auth', 'post', data={
+        response = self.request('auth', method='post', data={
             'username': email,
             'password': password
         })
@@ -34,6 +39,10 @@ class Client(object):
 
     def user(self):
         return self.request('auth/user')
+
+    def run(self, **kwargs):
+        queryset = {key: thing.as_dict() for key, thing in kwargs.items()}
+        return self.client.request('query', method='post', json=queryset)
 
     @cached_property
     def schemas(self):

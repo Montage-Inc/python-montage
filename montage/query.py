@@ -1,3 +1,6 @@
+import copy
+
+__all__ = ('Query',)
 
 
 class Query(object):
@@ -22,7 +25,7 @@ class Query(object):
 
     def get_all(self, index=None, *ids):
         value = ids if index is None else [index, ids]
-        self.terms.append(['$get_all', value)
+        self.terms.append(['$get_all', value])
         return self._clone()
 
     def filter(self, **kwargs):
@@ -38,7 +41,7 @@ class Query(object):
         return self._clone()
 
     def order_by(self, field, ordering=None):
-        # TODO
+        ordering = ordering or 'asc'
         return self._clone()
 
     def skip(self, num):
@@ -92,7 +95,7 @@ class Query(object):
         self.terms.append(['$max', field])
         return self._clone()
 
-    def between(self, _from, _to, index=None):
-        value = [_from, _to] if index is None else [_from, _to, index]
+    def between(self, start, end, index=None):
+        value = [start, end] if index is None else [start, end, index]
         self.terms.append(['$between', value])
         return self._clone()

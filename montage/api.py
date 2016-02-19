@@ -1,4 +1,6 @@
 
+__all__ = ('DataAPI', 'FileAPI', 'SchemaAPI')
+
 
 class DataAPI(object):
     def __init__(self, client):
@@ -11,9 +13,6 @@ class DataAPI(object):
     def delete(self, schema, document_id):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document_id)
         return self.client.request(endpoint, method='delete')
-
-    def query(self, query):
-        return self.client.request('query', method='post', json=query.as_dict())
 
 
 class FileAPI(object):

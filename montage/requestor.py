@@ -15,6 +15,7 @@ OS_VERSION_INFO = {
     'Linux': '%s' % (platform.linux_distribution()[0]),
     'Windows': '%s' % (platform.win32_ver()[0]),
     'Darwin': '%s' % (platform.mac_ver()[0]),
+    'Java': '%s' % (platform.java_ver()[0]),
 }
 
 USER_AGENT = 'python-montage/{lib_ver} {py_impl}/{py_ver} {os}/{os_dist}'.format(
@@ -32,7 +33,7 @@ class APIRequestor(object):
 
     def get_headers(self):
         headers = {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
             'User-Agent': USER_AGENT,
         }

@@ -10,25 +10,48 @@ Usage
 >>> import montage
 >>> client = montage.Client(subdomain[, token])
 >>> client.authenticate(email, password)  # sets client.token
+
+# Current user
 >>> client.user()
 
-# Users
->>> client.user.info()
-
-# Schemas
->>> client.schemas.all()
->>> client.schemas.get('schema')
-
-# Data
+# Querying and scripting
 >>> query = montage.Query('schema')
 >>> query = query.filter(**kwargs)
 >>> query = query.limit(10)
 >>> query = query.skip(10)
 >>> query = query.order_by(field[, ordering=asc|desc])
 
->>> client.data.query(query)
->>> client.data.query(q1=query1, q2=query2)
+>>> script = montage.Script('foobar.lua')
 
+>>> evaluated = montage.RunLua('''
+...     function max(num1, num2)
+...
+...        if (num1 > num2) then
+...           result = num1;
+...        else
+...           result = num2;
+...        end
+...
+...        return result;
+...     end
+...
+...     return max(10, 4)
+... ''')
+
+>>> client.run(query=query, foobar=script, max=evaluated)
+{
+    "data": {
+        "query": [ ... ],
+        "foobar": " ... ",
+        "max": 10,
+    }
+}
+
+# Schemas
+>>> client.schemas.all()
+>>> client.schemas.get('schema')
+
+# Data
 >>> client.data.save(schema, *documents)
 >>> client.data.get(schema, document_id)
 >>> client.data.delete(schema, document_id)
