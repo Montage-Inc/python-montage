@@ -1,6 +1,6 @@
 import os
 import responses
-from .utils import MontageTests, make_response, SCHEMAS, FILES
+from .utils import MontageTests, make_response, DOCUMENTS, SCHEMAS, FILES
 
 try:
     from cStringIO import StringIO
@@ -9,26 +9,26 @@ except ImportError:
     from io import BytesIO as StringIO
 
 
-class SchemaAPITests(MontageTests):
+class DataAPITests(MontageTests):
     @responses.activate
-    def test_schema_list(self):
-        endpoint = 'https://testco.hexxie.com/api/v1/schemas/'
-        responses.add(responses.GET, endpoint, body=make_response(SCHEMAS),
+    def test_get_document(self):
+        doc = DOCUMENTS[0]
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/documents/{1}/'.format('movies', doc['id'])
+        responses.add(responses.GET, endpoint, body=make_response(doc),
             content_type='application/json')
 
-        response = self.client.schemas.all()
+        response = self.client.data.get('movies', doc['id'])
 
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
     @responses.activate
-    def test_schema(self):
-        schema = SCHEMAS[0]
-        endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/'.format(schema['name'])
-        responses.add(responses.GET, endpoint, body=make_response(schema),
-            content_type='application/json')
+    def test_delete_document(self):
+        doc = DOCUMENTS[0]
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/documents/{1}/'.format('movies', doc['id'])
+        responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.schemas.get('movies')
+        response = self.client.data.delete('movies', doc['id'])
 
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
@@ -98,6 +98,31 @@ class FileAPITests(MontageTests):
         responses.add(responses.DELETE, endpoint, status=204)
 
         self.client.files.delete(file['id'])
+
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+
+class SchemaAPITests(MontageTests):
+    @responses.activate
+    def test_schema_list(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/'
+        responses.add(responses.GET, endpoint, body=make_response(SCHEMAS),
+            content_type='application/json')
+
+        response = self.client.schemas.all()
+
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_schema(self):
+        schema = SCHEMAS[0]
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/'.format(schema['name'])
+        responses.add(responses.GET, endpoint, body=make_response(schema),
+            content_type='application/json')
+
+        response = self.client.schemas.get('movies')
 
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
