@@ -23,9 +23,9 @@ class Query(object):
         self.terms.append(['$get', id])
         return self._clone()
 
-    def get_all(self, index=None, *ids):
-        value = ids if index is None else [index, ids]
-        self.terms.append(['$get_all', value])
+    def get_all(self, *ids, **kwargs):
+        index = kwargs.pop('index', 'id')
+        self.terms.append(['$get_all', [index, ids]])
         return self._clone()
 
     def filter(self, **kwargs):
@@ -42,6 +42,9 @@ class Query(object):
 
     def order_by(self, field, ordering=None):
         ordering = ordering or 'asc'
+        if ordering not in ('asc', 'desc'):
+            raise ValueError('.order_by ordering must be desc or asc')
+        self.terms.append(['$order_by', field, ordering])
         return self._clone()
 
     def skip(self, num):
@@ -52,8 +55,8 @@ class Query(object):
         self.terms.append(['$limit', num])
         return self._clone()
 
-    def slice(self, num):
-        self.terms.append(['$slice', num])
+    def slice(self, start, end):
+        self.terms.append(['$slice', [start, end]])
         return self._clone()
 
     def nth(self, num):
