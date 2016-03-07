@@ -38,7 +38,8 @@ class Client(object):
         return True
 
     def user(self):
-        return self.request('auth/user')
+        if self.token:
+            return self.request('auth/user')
 
     def run(self, **kwargs):
         queryset = {key: thing.as_dict() for key, thing in kwargs.items()}
