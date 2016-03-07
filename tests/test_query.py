@@ -13,9 +13,6 @@ class QueryTests(MontageTests):
         query = montage.Query('movies').get_all('1234', 'abcd')
         assert query.terms == [['$get_all', ['id', ('1234', 'abcd')]]]
 
-    def test_filter(self):
-        query = montage.Query('movies')
-
     def test_has_fields(self):
         query = montage.Query('movies').has_fields('title', 'rating')
         assert query.terms == [['$has_fields', ('title', 'rating')]]
@@ -91,3 +88,61 @@ class QueryTests(MontageTests):
     def test_between(self):
         query = montage.Query('movies').between(0, 10, 'rank')
         assert query.terms == [['$between', [0, 10, 'rank']]]
+
+
+class QueryFilterTests(MontageTests):
+    def test_ge(self):
+        query = montage.Query('movies').filter(
+            montage.Field('rank') >= 3
+        )
+
+        expected = {
+            '$schema': 'movies',
+            '$query': [
+                ['$filter', (
+                    ['rank', ['$ge', 3]],
+                )]
+            ]
+        }
+
+        assert query.as_dict() == expected
+
+    def test_multiple(self):
+        query = montage.Query('movies').filter(
+            montage.Field('year') >= 1990,
+            montage.Field('year') < 2000
+        )
+
+        expected = {
+            '$schema': 'movies',
+            '$query': [
+                ['$filter', (
+                    ['year', ['$ge', 1990]],
+                    ['year', ['$lt', 2000]],
+                )]
+            ]
+        }
+
+        assert query.as_dict() == expected
+
+    def test_or(self):
+        query = montage.Query('movies').filter(
+            montage.Query.OR(
+                montage.Field('year') < 1990,
+                montage.Field('year') >= 2000,
+            )
+        )
+
+        expected = {
+            '$schema': 'movies',
+            '$query': [
+                ['$filter', (
+                    ['$or', (
+                        ['year', ['$lt', 1990]],
+                        ['year', ['$ge', 2000]],
+                    )],
+                )]
+            ]
+        }
+
+        assert query.as_dict() == expected

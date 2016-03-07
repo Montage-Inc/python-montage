@@ -1,12 +1,82 @@
 import copy
+import datetime
 
 __all__ = ('Query',)
+
+
+class Field(object):
+    modifiers = ('date', 'time', 'year', 'month', 'day', 'hours', 'minutes',
+        'seconds', 'day_of_month', 'day_of_year', 'timezone')
+    operators = ('eq', 'ne', 'lt', 'le', 'gt', 'ge', 'ieq', 'in', 'contains',
+        'regex', 'starts', 'istarts', 'ends', 'iends', 'intersects', 'includes')
+
+    def __init__(self, field):
+        self.field = field
+
+    def __eq__(self, other):
+        return self.eq(other)
+
+    def __ne__(self, other):
+        return self.ne(other)
+
+    def __lt__(self, other):
+        return self.lt(other)
+
+    def __le__(self, other):
+        return self.le(other)
+
+    def __gt__(self, other):
+        return self.gt(other)
+
+    def __ge__(self, other):
+        return self.ge(other)
+
+    def in_(self, value):
+        return getattr(self, 'in')(value)
+
+    def __getattr__(self, attr):
+        if attr in self.operators:
+            return self._operator(attr)
+        if attr in self.modifiers:
+            return self._modifier(attr)
+        raise AttributeError("'row' object has no attribute '{0}'".format(attr))
+
+    def _modifier(self, modifier):
+        def inner():
+            return Field('{0}.${1}'.format(self.field, modifier))
+        return inner
+
+    def _operator(self, operator):
+        def inner(value):
+            return [self.field, ['${0}'.format(operator), self._coerce(value)]]
+        return inner
+
+    def _coerce(self, value):
+        if isinstance(value, datetime.datetime):
+            return ['$datetime', str(value)]
+        if isinstance(value, datetime.date):
+            return ['$date', str(value)]
+        if isinstance(value, datetime.time):
+            return ['$time', str(value)]
+        return value
 
 
 class Query(object):
     def __init__(self, schema):
         self.schema = schema
         self.terms = []
+
+    @classmethod
+    def AND(cls, *args):
+        return ['$and', args]
+
+    @classmethod
+    def OR(cls, *args):
+        return ['$or', args]
+
+    @classmethod
+    def NOT(cls, *args):
+        return ['$or', args]
 
     def _clone(self):
         query = type(self)(self.schema)
@@ -28,8 +98,8 @@ class Query(object):
         self.terms.append(['$get_all', [index, ids]])
         return self._clone()
 
-    def filter(self, **kwargs):
-        # TODO
+    def filter(self, *filters):
+        self.terms.append(['$filter', filters])
         return self._clone()
 
     def has_fields(self, *fields):

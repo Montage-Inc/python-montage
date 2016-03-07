@@ -7,6 +7,9 @@ class DataAPI(object):
     def __init__(self, client):
         self.client = client
 
+    def save(self, *documents):
+        endpoint = 'schemas/{0}/save'.format(schema, document_id)
+
     def get(self, schema, document_id):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document_id)
         return self.client.request(endpoint)

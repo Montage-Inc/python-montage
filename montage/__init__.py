@@ -6,5 +6,5 @@ __license__ = 'MIT License'
 
 from .client import Client, client
 from .errors import MontageError, HttpError
-from .query import Query
+from .query import Field, Query
 from .scripting import Script, RunLua
