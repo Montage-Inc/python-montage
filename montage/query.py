@@ -145,11 +145,8 @@ class Query(object):
         self.terms.append(['$without', fields])
         return self._clone()
 
-    def count(self, value=None):
-        if value:
-            self.terms.append(['$count', value])
-        else:
-            self.terms.append(['$count'])
+    def count(self):
+        self.terms.append(['$count'])
         return self._clone()
 
     def sum(self, field):
