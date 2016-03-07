@@ -1,29 +1,24 @@
-import json
 import platform
 import requests
 
 from . import __version__
 from .compat import urljoin
-from .encoder import SmartJSONEncoder
+from .encoders import JSONDecoder, JSONEncoder
 from .errors import HttpError
 
 __all__ = ('APIRequestor',)
-
-# This dictionary is used to dynamically select the appropriate platform for
-# the user agent string.
-OS_VERSION_INFO = {
-    'Linux': '%s' % (platform.linux_distribution()[0]),
-    'Windows': '%s' % (platform.win32_ver()[0]),
-    'Darwin': '%s' % (platform.mac_ver()[0]),
-    'Java': '%s' % (platform.java_ver()[0]),
-}
 
 USER_AGENT = 'python-montage/{lib_ver} {py_impl}/{py_ver} {os}/{os_dist}'.format(
     lib_ver=__version__,
     py_impl=platform.python_implementation(),
     py_ver=platform.python_version(),
     os=platform.system(),
-    os_dist=OS_VERSION_INFO.get(platform.system(), 'X')
+    os_dist={
+        'Linux': lambda: platform.linux_distribution()[0],
+        'Windows': lambda: platform.win32_ver()[0],
+        'Darwin': lambda: platform.mac_ver()[0],
+        'Java': lambda: platform.java_ver()[0],
+    }.get(platform.system(), lambda: '-')()
 )
 
 
@@ -42,6 +37,15 @@ class APIRequestor(object):
 
         return headers
 
+    def is_json(self, response):
+        return response.headers['Content-Type'] == 'application/json'
+
+    def decode(self, content):
+        return JSONDecoder().decode(content.decode('utf-8'))
+
+    def encode(self, obj):
+        return JSONEncoder().encode(obj)
+
     def request(self, url, method=None, **kwargs):
         method = method or 'get'
 
@@ -50,26 +54,25 @@ class APIRequestor(object):
 
         data = kwargs.pop('json', None)
         if data:
-            kwargs['data'] = json.dumps(data, cls=SmartJSONEncoder)
+            kwargs['data'] = self.encode(data)
             headers['Content-Type'] = 'application/json'
 
         kwargs.setdefault('timeout', 10)
 
         response = requests.request(method, url, headers=headers, **kwargs)
 
-        # Authorization failed or not provided.
-        if response.status_code == 401:
-            raise AuthenticationError(response['errors'][0]['detail'])
-
-        # Non-2xx responses get an HttpError.
+        # Non-2xx responses get a generic HttpError. If we need to
+        # differentiate between 400's and 500's, we can do that at
+        # a later date.
         if not (200 <= response.status_code <= 299):
-            if response.headers['Content-Type'] == 'application/json':
-                raise HttpError(response.status_code, response.json()['errors'][0]['detail'])
+            if self.is_json(response):
+                data = self.decode(response.content)
+                raise HttpError(response.status_code, data['errors'][0]['detail'])
             raise HttpError(response.status_code, response.text)
 
         # Success! Return the response content as JSON or text as needed.
-        if response.headers['Content-Type'] == 'application/json':
-            return response.json()
+        if self.is_json(response):
+            return self.decode(response.content)
         return response.text
 
     def get(self, url, **kwargs):

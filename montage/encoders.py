@@ -1,6 +1,14 @@
+import datetime
+import decimal
 import json
+import uuid
 
-__all__ = ('SmartJSONEncoder',)
+try:
+    import rapidjson
+except ImportError:
+    rapidjson = False
+
+__all__ = ('JSONDecoder', 'JSONEncoder')
 
 
 def is_aware(value):
@@ -13,9 +21,14 @@ def is_aware(value):
         value.tzinfo.utcoffset(value) is not None
 
 
-class SmartJSONEncoder(json.JSONEncoder):
+
+class PyJSONDecoder(json.JSONDecoder):
+    pass
+
+
+class PyJSONEncoder(json.JSONEncoder):
     """
-    JSONEncoder subclass that knows how to encode date/time and decimal types.
+    JSONEncoder that knows how to encode date/times, Decimals, and UUIDs.
     """
     def default(self, o):
         # See "Date Time String Format" in the ECMA-262 specification.
@@ -41,4 +54,28 @@ class SmartJSONEncoder(json.JSONEncoder):
         if isinstance(o, decimal.Decimal):
             return str(o)
 
+        if isinstance(o, uuid.UUID):
+            return str(o)
+
         return super(SmartJSONEncoder, self).default(o)
+
+
+class RapidJSONDecoder(object):
+    def decode(self, data):
+        return rapidjson.loads(data, use_decimal=True)
+
+
+class RapidJSONEncoder(object):
+    def __init__(self):
+        self._encoder = PyJSONEncoder()
+
+    def encode(self, data):
+        return rapidjson.dumps(data, default=self._encoder.default)
+
+
+if rapidjson is False:
+    JSONDecoder = PyJSONDecoder
+    JSONEncoder = PyJSONEncoder
+else:
+    JSONDecoder = RapidJSONDecoder
+    JSONEncoder = RapidJSONEncoder
