@@ -1,3 +1,4 @@
+import json
 import os
 import responses
 from .utils import MontageTests, make_response, DOCUMENTS, FILES, SCHEMAS, USER
@@ -182,7 +183,7 @@ class UserAPITests(MontageTests):
 
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
-        assert responses.calls[0].request.body == '{"password": "changeme"}'
+        assert json.loads(responses.calls[0].request.body) == {'password': 'changeme'}
 
     @responses.activate
     def test_user_detail(self):
