@@ -11,7 +11,8 @@ def make_response(data):
 
 
 USER = {
-    'name': 'Joe McTest',
+    'id': 1,
+    'full_name': 'Joe McTest',
     'email': 'test@example.com',
     'token': 'f47d2208-1b24-4c65-afb8-4a9ed02b68ac',
 }

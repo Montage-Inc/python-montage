@@ -23,7 +23,7 @@ class FileAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def all(self):
+    def list(self):
         return self.client.request('files')
 
     def get(self, file_id):
@@ -52,8 +52,44 @@ class SchemaAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def all(self):
+    def list(self):
         return self.client.request('schemas')
 
     def get(self, schema):
         return self.client.request('schemas/{0}'.format(schema))
+
+
+class UserAPI(object):
+    attributes = ('email', 'full_name', 'password')
+
+    def __init__(self, client):
+        self.client = client
+
+    def list(self, **kwargs):
+        return self.client.request('users', params=kwargs)
+
+    def create(self, full_name, email, password):
+        payload = {
+            'full_name': full_name,
+            'email': email,
+            'password': password,
+        }
+        return self.client.request('users', method='post', json=payload)
+
+    def get(self, user_id):
+        return self.client.request('users/{0}'.format(user_id))
+
+    def update(self, user_id, full_name=None, email=None, password=None):
+        payload = {}
+        if full_name:
+            payload['full_name'] = full_name
+        if email:
+            payload['email'] = email
+        if password:
+            payload['password'] = password
+
+        return self.client.request('users/{0}'.format(user_id),
+            method='patch', json=payload)
+
+    def delete(self, user_id):
+        return self.client.request('users/{0}'.format(user_id), method='delete')
