@@ -23,8 +23,8 @@ class FileAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def list(self):
-        return self.client.request('files')
+    def list(self, **kwargs):
+        return self.client.request('files', params=kwargs)
 
     def get(self, file_id):
         return self.client.request('files/{0}'.format(file_id))
@@ -52,8 +52,8 @@ class SchemaAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def list(self):
-        return self.client.request('schemas')
+    def list(self, **kwargs):
+        return self.client.request('schemas', params=kwargs)
 
     def get(self, schema):
         return self.client.request('schemas/{0}'.format(schema))

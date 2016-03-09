@@ -25,7 +25,6 @@ class DataAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.data.get('movies', doc['id'])
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -36,7 +35,6 @@ class DataAPITests(MontageTests):
         responses.add(responses.DELETE, endpoint, status=204)
 
         response = self.client.data.delete('movies', doc['id'])
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -49,9 +47,20 @@ class FileAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.files.list()
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_file_filter(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/files/'
+        responses.add(responses.GET, endpoint, body=make_response(FILES),
+            content_type='application/json')
+
+        gigabyte = 1024 * 1024 * 1024
+        response = self.client.files.list(size__gte=gigabyte)
+        assert len(responses.calls) == 1
+        query = urlparse(responses.calls[0].request.url).query
+        assert query == 'size__gte={0}'.format(gigabyte)
 
     @responses.activate
     def test_file(self):
@@ -61,7 +70,6 @@ class FileAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.files.get(file['id'])
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -73,7 +81,6 @@ class FileAPITests(MontageTests):
 
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files/python-powered.png')
         response = self.client.files.save(('python-powered.png', open(path, 'rb')))
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -105,7 +112,6 @@ class FileAPITests(MontageTests):
         responses.add(responses.DELETE, endpoint, status=204)
 
         self.client.files.delete(file['id'])
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -118,9 +124,19 @@ class SchemaAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.schemas.list()
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_schema_filter(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/'
+        responses.add(responses.GET, endpoint, body=make_response(SCHEMAS),
+            content_type='application/json')
+
+        response = self.client.schemas.list(name__istartswith='m')
+        assert len(responses.calls) == 1
+        query = urlparse(responses.calls[0].request.url).query
+        assert query == 'name__istartswith=m'
 
     @responses.activate
     def test_schema(self):
@@ -130,7 +146,6 @@ class SchemaAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.schemas.get('movies')
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -143,7 +158,6 @@ class UserAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.users.list()
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -154,9 +168,9 @@ class UserAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.users.list(email__endswith='example.com')
-
         assert len(responses.calls) == 1
-        assert urlparse(responses.calls[0].request.url).query == 'email__endswith=example.com'
+        query = urlparse(responses.calls[0].request.url).query
+        assert query == 'email__endswith=example.com'
 
     @responses.activate
     def test_create_user(self):
@@ -169,7 +183,6 @@ class UserAPITests(MontageTests):
             email=USER['email'],
             password='letmein',
         )
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -180,7 +193,6 @@ class UserAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.users.update(USER['id'], password='changeme')
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
         assert json.loads(responses.calls[0].request.body) == {'password': 'changeme'}
@@ -192,7 +204,6 @@ class UserAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.users.get(1)
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -202,6 +213,5 @@ class UserAPITests(MontageTests):
         responses.add(responses.DELETE, endpoint, status=204)
 
         response = self.client.users.delete(1)
-
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
