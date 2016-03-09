@@ -58,7 +58,7 @@ Usage
     }
 
     # Schemas
-    >>> client.schemas.all()
+    >>> client.schemas.list()
     >>> client.schemas.get('schema')
 
     # Data
@@ -67,7 +67,19 @@ Usage
     >>> client.data.delete(schema, document_id)
 
     # Files
-    >>> client.files.all()
+    >>> client.files.list()
     >>> client.files.save(*files)
     >>> client.files.get(file_id)
     >>> client.files.delete(file_id)
+
+    # Users
+    >>> client.users.list()
+    >>> client.users.list(email__endswith='gmail.com')
+    >>> client.users.create(
+    ...     full_name='Test User',
+    ...     email='test@example.com',
+    ...     password='letmein'
+    ... )
+    >>> client.users.get(user_id)
+    >>> client.users.update(user_id, password='changeme')
+    >>> client.users.delete(user_id)
