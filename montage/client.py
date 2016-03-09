@@ -28,7 +28,7 @@ class Client(object):
         )
 
     def authenticate(self, email, password):
-        response = self.request('auth', method='post', data={
+        response = self.request('user', method='post', data={
             'username': email,
             'password': password
         })
@@ -39,7 +39,7 @@ class Client(object):
 
     def user(self):
         if self.token:
-            return self.request('auth/user')
+            return self.request('user')
 
     def run(self, **kwargs):
         queryset = {key: thing.as_dict() for key, thing in kwargs.items()}
