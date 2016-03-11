@@ -3,18 +3,27 @@ import mimetypes
 __all__ = ('DataAPI', 'FileAPI', 'SchemaAPI')
 
 
-class DataAPI(object):
+class DocumentsAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def save(self, *documents):
-        endpoint = 'schemas/{0}/save'.format(schema, document_id)
+    def save(self, schema, *documents):
+        endpoint = 'schemas/{0}/documents'.format(schema, schema)
+        return self.client.request(endpoint, method='post', json=documents)
 
     def get(self, schema, document_id):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document_id)
         return self.client.request(endpoint)
 
-    def delete(self, schema, document_id):
+    def replace(self, schema, document):
+        endpoint = 'schemas/{0}/documents/{1}'.format(schema, document['id'])
+        return self.client.request(endpoint, method='post', json=document)
+
+    def update(self, schema, document):
+        endpoint = 'schemas/{0}/documents/{1}'.format(schema, document['id'])
+        return self.client.request(endpoint, method='patch', json=document)
+
+    def remove(self, schema, document_id):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document_id)
         return self.client.request(endpoint, method='delete')
 
@@ -27,10 +36,12 @@ class FileAPI(object):
         return self.client.request('files', params=kwargs)
 
     def get(self, file_id):
-        return self.client.request('files/{0}'.format(file_id))
+        endpoint = 'files/{0}'.format(file_id)
+        return self.client.request(endpoint)
 
-    def delete(self, file_id):
-        return self.client.request('files/{0}'.format(file_id), method='delete')
+    def remove(self, file_id):
+        endpoint = 'files/{0}'.format(file_id)
+        return self.client.request(endpoint, method='delete')
 
     def save(self, *files):
         '''
@@ -91,5 +102,5 @@ class UserAPI(object):
         return self.client.request('users/{0}'.format(user_id),
             method='patch', json=payload)
 
-    def delete(self, user_id):
+    def remove(self, user_id):
         return self.client.request('users/{0}'.format(user_id), method='delete')

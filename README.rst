@@ -62,15 +62,17 @@ Usage
     >>> client.schemas.get('schema')
 
     # Data
-    >>> client.data.save(schema, *documents)
-    >>> client.data.get(schema, document_id)
-    >>> client.data.delete(schema, document_id)
+    >>> client.documents.save(schema, *documents)
+    >>> client.documents.get(schema, document_id)
+    >>> client.documents.replace(schema, document)
+    >>> client.documents.update(schema, document)
+    >>> client.documents.remove(schema, document_id)
 
     # Files
     >>> client.files.list()
     >>> client.files.save(*files)
     >>> client.files.get(file_id)
-    >>> client.files.delete(file_id)
+    >>> client.files.remove(file_id)
 
     # Users
     >>> client.users.list()
@@ -82,4 +84,4 @@ Usage
     ... )
     >>> client.users.get(user_id)
     >>> client.users.update(user_id, password='changeme')
-    >>> client.users.delete(user_id)
+    >>> client.users.remove(user_id)

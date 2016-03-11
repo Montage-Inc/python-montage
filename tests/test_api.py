@@ -16,7 +16,7 @@ except ImportError:
     from urlparse import urlparse
 
 
-class DataAPITests(MontageTests):
+class DocumentsAPITests(MontageTests):
     @responses.activate
     def test_get_document(self):
         doc = DOCUMENTS[0]
@@ -24,7 +24,7 @@ class DataAPITests(MontageTests):
         responses.add(responses.GET, endpoint, body=make_response(doc),
             content_type='application/json')
 
-        response = self.client.data.get('movies', doc['id'])
+        response = self.client.documents.get('movies', doc['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -34,7 +34,7 @@ class DataAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/documents/{1}/'.format('movies', doc['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.data.delete('movies', doc['id'])
+        response = self.client.documents.remove('movies', doc['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -111,7 +111,7 @@ class FileAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/files/{0}/'.format(file['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        self.client.files.delete(file['id'])
+        self.client.files.remove(file['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -212,6 +212,6 @@ class UserAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/users/1/'
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.users.delete(1)
+        response = self.client.users.remove(1)
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint

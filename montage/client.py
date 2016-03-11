@@ -3,7 +3,7 @@ import os
 
 from cached_property import cached_property
 
-from .api import DataAPI, FileAPI, SchemaAPI, UserAPI
+from .api import DocumentsAPI, FileAPI, SchemaAPI, UserAPI
 from .compat import urljoin
 from .requestor import APIRequestor
 
@@ -46,8 +46,8 @@ class Client(object):
         return self.client.request('query', method='post', json=queryset)
 
     @cached_property
-    def data(self):
-        return DataAPI(self)
+    def documents(self):
+        return DocumentsAPI(self)
 
     @cached_property
     def files(self):
