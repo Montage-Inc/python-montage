@@ -8,7 +8,7 @@ class DocumentsAPI(object):
         self.client = client
 
     def save(self, schema, *documents):
-        endpoint = 'schemas/{0}/documents'.format(schema, schema)
+        endpoint = 'schemas/{0}/save'.format(schema, schema)
         return self.client.request(endpoint, method='post', json=documents)
 
     def get(self, schema, document_id):
