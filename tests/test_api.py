@@ -1,7 +1,7 @@
 import json
 import os
 import responses
-from .utils import MontageTests, make_response, DOCUMENTS, FILES, SCHEMAS, USER
+from .utils import MontageTests, make_response, DOCUMENTS, FILES, ROLE, SCHEMAS, USER
 
 try:
     from cStringIO import StringIO
@@ -116,6 +116,38 @@ class FileAPITests(MontageTests):
         assert responses.calls[0].request.url == endpoint
 
 
+class RoleAPITests(MontageTests):
+    @responses.activate
+    def test_role_list(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/roles/'
+        responses.add(responses.GET, endpoint, body=make_response(ROLE),
+            content_type='application/json')
+
+        response = self.client.roles.list()
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_role_detail(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/roles/{0}/'.format(ROLE['name'])
+        responses.add(responses.GET, endpoint, body=make_response(ROLE),
+            content_type='application/json')
+
+        response = self.client.roles.get(ROLE['name'])
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_role_delete(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/roles/{0}/'.format(ROLE['name'])
+        responses.add(responses.DELETE, endpoint, status=204)
+
+        response = self.client.roles.remove(ROLE['name'])
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+
+
 class SchemaAPITests(MontageTests):
     @responses.activate
     def test_schema_list(self):
@@ -139,13 +171,23 @@ class SchemaAPITests(MontageTests):
         assert query == 'name__istartswith=m'
 
     @responses.activate
-    def test_schema(self):
+    def test_schema_detail(self):
         schema = SCHEMAS[0]
         endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/'.format(schema['name'])
         responses.add(responses.GET, endpoint, body=make_response(schema),
             content_type='application/json')
 
         response = self.client.schemas.get('movies')
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_schema_delete(self):
+        schema = SCHEMAS[0]
+        endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/'.format(schema['name'])
+        responses.add(responses.DELETE, endpoint, status=204)
+
+        response = self.client.schemas.remove(schema['name'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -208,7 +250,7 @@ class UserAPITests(MontageTests):
         assert responses.calls[0].request.url == endpoint
 
     @responses.activate
-    def test_user_detail(self):
+    def test_user_delete(self):
         endpoint = 'https://testco.hexxie.com/api/v1/users/1/'
         responses.add(responses.DELETE, endpoint, status=204)
 

@@ -85,3 +85,13 @@ Usage
     >>> client.users.get(user_id)
     >>> client.users.update(user_id, password='changeme')
     >>> client.users.remove(user_id)
+
+    # Roles
+    >>> client.roles.list()
+    >>> client.roles.create(name='admins', add_users=['<user_id>'])
+    >>> client.roles.get('admins')
+    >>> client.roles.update('admins',
+            add_users=['<user_id>'],
+            remove_users=['<user_id>']
+        )
+    >>> client.roles.remove('admins')

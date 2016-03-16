@@ -1,14 +1,18 @@
 import mimetypes
 
-__all__ = ('DataAPI', 'FileAPI', 'SchemaAPI')
+__all__ = ('DataAPI', 'FileAPI', 'RoleAPI', 'SchemaAPI')
 
 
 class DocumentsAPI(object):
     def __init__(self, client):
         self.client = client
 
+    def list(self, schema):
+        endpoint = 'schemas/{0}/documents'.format(schema, schema)
+        return self.client.request(endpoint)
+
     def save(self, schema, *documents):
-        endpoint = 'schemas/{0}/save'.format(schema, schema)
+        endpoint = 'schemas/{0}/documents'.format(schema, schema)
         return self.client.request(endpoint, method='post', json=documents)
 
     def get(self, schema, document_id):
@@ -17,7 +21,7 @@ class DocumentsAPI(object):
 
     def replace(self, schema, document):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document['id'])
-        return self.client.request(endpoint, method='post', json=document)
+        return self.client.request(endpoint, method='put', json=document)
 
     def update(self, schema, document):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document['id'])
@@ -59,15 +63,70 @@ class FileAPI(object):
         return self.client.request('files', 'post', files=file_list)
 
 
+class RoleAPI(object):
+    def __init__(self, client):
+        self.client = client
+
+    def create(self, name, add_users=None):
+        payload = {
+            'name': name,
+            'add_users': users or []
+        }
+        return self.client.request('roles', method='post', json=payload)
+
+    def list(self, **kwargs):
+        return self.client.request('roles', params=kwargs)
+
+    def get(self, role):
+        return self.client.request('roles/{0}'.format(role))
+
+    def update(self, role, name=None, add_users=None, remove_users=None):
+        payload = {}
+        if name:
+            payload['name'] = name
+        if add_users:
+            payload['add_users'] = add_users
+        if remove_users:
+            payload['remove_users'] = remove_users
+
+        if payload:
+            return self.client.request('roles/{0}'.format(role),
+                method='patch', json=payload)
+
+    def remove(self, role):
+        return self.client.request('roles/{0}'.format(role), method='delete')
+
+
 class SchemaAPI(object):
     def __init__(self, client):
         self.client = client
+
+    def create(self, name, fields=None):
+        payload = {
+            'name': name,
+            'fields': fields or []
+        }
+        return self.client.request('schemas', method='post', json=payload)
 
     def list(self, **kwargs):
         return self.client.request('schemas', params=kwargs)
 
     def get(self, schema):
         return self.client.request('schemas/{0}'.format(schema))
+
+    def update(self, schema, name=None, fields=None):
+        payload = {}
+        if name:
+            payload['name'] = name
+        if fields:
+            payload['fields'] = fields
+
+        if payload:
+            return self.client.request('schemas/{0}'.format(schema),
+                method='patch', json=payload)
+
+    def remove(self, schema):
+        return self.client.request('schemas/{0}'.format(schema), method='delete')
 
 
 class UserAPI(object):
@@ -99,8 +158,9 @@ class UserAPI(object):
         if password:
             payload['password'] = password
 
-        return self.client.request('users/{0}'.format(user_id),
-            method='patch', json=payload)
+        if payload:
+            return self.client.request('users/{0}'.format(user_id),
+                method='patch', json=payload)
 
     def remove(self, user_id):
         return self.client.request('users/{0}'.format(user_id), method='delete')

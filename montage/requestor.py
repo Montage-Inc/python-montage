@@ -80,3 +80,9 @@ class APIRequestor(object):
 
     def post(self, url, **kwargs):
         return self.request(url, method='post', **kwargs)
+
+    def put(self, url, **kwargs):
+        return self.request(url, method='put', **kwargs)
+
+    def patch(self, url, **kwargs):
+        return self.request(url, method='patch', **kwargs)

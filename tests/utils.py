@@ -18,6 +18,12 @@ USER = {
 }
 
 
+ROLE = {
+    'name': 'TestUsers',
+    'users': [1]
+}
+
+
 SCHEMAS = [{
     'id': 'c449d88b-7eec-4c23-ba87-45057735f561',
     'name': 'movies',
