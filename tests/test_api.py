@@ -1,7 +1,7 @@
 import json
 import os
 import responses
-from .utils import MontageTests, make_response, DOCUMENTS, FILES, ROLE, SCHEMAS, USER
+from .utils import MontageTests, make_response, DOCUMENTS, FILES, POLICY, ROLE, SCHEMAS, USER
 
 try:
     from cStringIO import StringIO
@@ -116,6 +116,47 @@ class FileAPITests(MontageTests):
         assert responses.calls[0].request.url == endpoint
 
 
+class PolicyAPITests(MontageTests):
+    @responses.activate
+    def test_policy_list(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/policy/'
+        responses.add(responses.GET, endpoint, body=make_response(POLICY),
+            content_type='application/json')
+
+        response = self.client.policy.list()
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_policy_detail(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/policy/{0}/'.format(POLICY['id'])
+        responses.add(responses.GET, endpoint, body=make_response(POLICY),
+            content_type='application/json')
+
+        response = self.client.policy.get(POLICY['id'])
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_policy_update(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/policy/{0}/'.format(POLICY['id'])
+        responses.add(responses.PATCH, endpoint, body=make_response(POLICY),
+            content_type='application/json')
+
+        response = self.client.policy.update(POLICY['id'], description='Updated')
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_policy_delete(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/policy/{0}/'.format(POLICY['id'])
+        responses.add(responses.DELETE, endpoint, status=204)
+
+        response = self.client.policy.remove(POLICY['id'])
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+
 class RoleAPITests(MontageTests):
     @responses.activate
     def test_role_list(self):
@@ -134,6 +175,16 @@ class RoleAPITests(MontageTests):
             content_type='application/json')
 
         response = self.client.roles.get(ROLE['name'])
+        assert len(responses.calls) == 1
+        assert responses.calls[0].request.url == endpoint
+
+    @responses.activate
+    def test_role_update(self):
+        endpoint = 'https://testco.hexxie.com/api/v1/roles/{0}/'.format(ROLE['name'])
+        responses.add(responses.PATCH, endpoint, body=make_response(ROLE),
+            content_type='application/json')
+
+        response = self.client.roles.update(ROLE['name'], name='Managers')
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 

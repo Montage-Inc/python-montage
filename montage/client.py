@@ -65,6 +65,10 @@ class Client(object):
     def users(self):
         return api.UserAPI(self)
 
+    @cached_property
+    def policy(self):
+        return api.PolicyAPI(self)
+
 
 client = Client(
     subdomain=os.environ.get('MONTAGE_SUBDOMAIN'),

@@ -23,6 +23,30 @@ ROLE = {
     'users': [1]
 }
 
+POLICY = {
+    'id': '5f3eab03-1d70-4cf1-a79f-56a68118eb09',
+    'description': 'Default policy',
+    'policy': {
+        'version': 'v1',
+        'grant': True,
+        'statements': [
+            {
+                'action': ['*'],
+                'resource': '*',
+                'principal': ['montage:role:Admins'],
+            },
+            {
+                'action': [
+                    'montage:*:list',
+                    'montage:*:detail',
+                    'montage:documents:read',
+                ],
+                'resource': '*',
+                'principal': ['montage:user:id:*'],
+            }
+        ]
+    }
+}
 
 SCHEMAS = [{
     'id': 'c449d88b-7eec-4c23-ba87-45057735f561',
