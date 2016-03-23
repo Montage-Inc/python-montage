@@ -7,10 +7,6 @@ class DocumentsAPI(object):
     def __init__(self, client):
         self.client = client
 
-    def list(self, schema):
-        endpoint = 'schemas/{0}/documents'.format(schema, schema)
-        return self.client.request(endpoint)
-
     def save(self, schema, *documents):
         endpoint = 'schemas/{0}/documents'.format(schema, schema)
         return self.client.request(endpoint, method='post', json=documents)
