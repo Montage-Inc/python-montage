@@ -41,9 +41,10 @@ class Client(object):
         if self.token:
             return self.request('user')
 
-    def process(self, **kwargs):
-        queryset = {key: thing.as_dict() for key, thing in kwargs.items()}
-        return self.request('query', method='post', json=queryset)
+    def execute(self, **kwargs):
+        queryset = {key: executable.as_dict()
+            for key, executable in kwargs.items()}
+        return self.request('execute', method='post', json=queryset)
 
     @cached_property
     def documents(self):
