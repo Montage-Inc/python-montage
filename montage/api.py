@@ -90,12 +90,11 @@ class PolicyAPI(object):
     def remove(self, policy_id):
         return self.client.request('policy/{0}'.format(policy_id), method='delete')
 
-    def check_permission(self, action=None, resource=None):
-        payload = {}
-        if action:
-            payload['action'] = action
-        if resource:
-            payload['action'] = resource
+    def check_permission(self, action, resource=None):
+        payload = {
+            'action': action,
+            'resource': resource,
+        }
         return self.client.request('policy/check/', params=payload)
 
 
