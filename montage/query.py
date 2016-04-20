@@ -169,3 +169,13 @@ class Query(object):
         value = [start, end] if index is None else [start, end, index]
         self.terms.append(['$between', value])
         return self._clone()
+
+    def get_intersecting(self, geometry, index):
+        value = [index, geometry]
+        self.terms.append(['$get_intersecting', value])
+        return self._clone()
+
+    def get_nearest(self, geometry, index):
+        value = [index, geometry]
+        self.terms.append(['$get_nearest', value])
+        return self._clone()

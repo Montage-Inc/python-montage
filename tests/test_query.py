@@ -89,6 +89,22 @@ class QueryTests(MontageTests):
         query = montage.Query('movies').between(0, 10, 'rank')
         assert query.terms == [['$between', [0, 10, 'rank']]]
 
+    def test_get_intersecting(self):
+        point = {
+            'type': 'Point',
+            'coordinates': [-120.34589052200315, 36.12704320788633]
+        }
+        query = montage.Query('places').get_intersecting(point, index='location')
+        assert query.terms == [['$get_intersecting', ['location', point]]]
+
+    def test_get_nearest(self):
+        point = {
+            'type': 'Point',
+            'coordinates': [-120.34589052200315, 36.12704320788633]
+        }
+        query = montage.Query('places').get_nearest(point, index='location')
+        assert query.terms == [['$get_nearest', ['location', point]]]
+
 
 class QueryFilterTests(MontageTests):
     def test_ge(self):
