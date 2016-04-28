@@ -9,12 +9,13 @@ from .requestor import APIRequestor
 
 __all__ = ('Client', 'client')
 
-BASE_URL = 'mntge.com'
-
 
 class Client(object):
-    def __init__(self, subdomain, token=None, url=BASE_URL):
-        self.domain = '{0}.{1}'.format(subdomain, url)
+    domain = 'mntge.com'
+    protocol = 'https'
+
+    def __init__(self, subdomain, token=None):
+        self.subdomain = subdomain
         self.token = token
 
     def request(self, endpoint, method=None, **kwargs):
@@ -22,9 +23,11 @@ class Client(object):
         return requestor.request(self.url(endpoint), method, **kwargs)
 
     def url(self, endpoint):
-        return 'https://{domain}/api/v1/{endpoint}/'.format(
+        return '{protocol}://{subdomain}.{domain}/api/v1/{endpoint}/'.format(
+            protocol=self.protocol,
+            subdomain=self.subdomain,
             domain=self.domain,
-            endpoint=endpoint
+            endpoint=endpoint,
         )
 
     def authenticate(self, email, password):

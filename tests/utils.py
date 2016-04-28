@@ -100,5 +100,6 @@ FILES = [{
 
 class MontageTests(unittest.TestCase):
     def setUp(self):
-        self.client = montage.Client('testco', token=USER['token'], url='hexxie.com')
+        self.client = montage.Client('testco', token=USER['token'])
+        self.client.domain = 'hexxie.com'
         super(MontageTests, self).setUp()

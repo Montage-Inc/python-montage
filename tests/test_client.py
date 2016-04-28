@@ -11,13 +11,18 @@ class ClientTests(MontageTests):
         url2 = self.client.url('user')
         self.assertEqual(url1, url2)
 
+    def get_test_client(self):
+        client = montage.Client('testco')
+        client.domain = 'hexxie.com'
+        return client
+
     @responses.activate
     def test_authenticate(self):
         endpoint = 'https://testco.hexxie.com/api/v1/user/'
         responses.add(responses.POST, endpoint, body=make_response(USER),
             content_type='application/json')
 
-        client = montage.Client('testco', url='hexxie.com')
+        client = self.get_test_client()
         assert client.token is None
 
         authenticated = client.authenticate('test@example.com', 'letmein')
@@ -33,7 +38,7 @@ class ClientTests(MontageTests):
         responses.add(responses.POST, endpoint, body=json.dumps(error),
             content_type='application/json')
 
-        client = montage.Client('testco', url='hexxie.com')
+        client = self.get_test_client()
         assert client.token is None
 
         authenticated = client.authenticate('fake@example.com', 'invalid')
@@ -43,7 +48,7 @@ class ClientTests(MontageTests):
         assert responses.calls[0].request.url == endpoint
 
     def test_user_unauthenticated(self):
-        client = montage.Client('testco', url='hexxie.com')
+        client = self.get_test_client()
         assert client.user() is None
 
     @responses.activate
