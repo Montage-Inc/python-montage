@@ -13,7 +13,7 @@ class ClientTests(MontageTests):
 
     def get_test_client(self):
         client = montage.Client('testco')
-        client.domain = 'hexxie.com'
+        client.host = 'hexxie.com'
         return client
 
     @responses.activate

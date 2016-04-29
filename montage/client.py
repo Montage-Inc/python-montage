@@ -11,21 +11,24 @@ __all__ = ('Client', 'client')
 
 
 class Client(object):
-    domain = 'mntge.com'
+    host = 'mntge.com'
     protocol = 'https'
 
-    def __init__(self, subdomain, token=None):
-        self.subdomain = subdomain
+    def __init__(self, project, token=None):
+        self.project = project
         self.token = token
+
+    @property
+    def domain(self):
+        return '{0}.{1}'.format(self.project, self.host)
 
     def request(self, endpoint, method=None, **kwargs):
         requestor = APIRequestor(self.token)
         return requestor.request(self.url(endpoint), method, **kwargs)
 
     def url(self, endpoint):
-        return '{protocol}://{subdomain}.{domain}/api/v1/{endpoint}/'.format(
+        return '{protocol}://{domain}/api/v1/{endpoint}/'.format(
             protocol=self.protocol,
-            subdomain=self.subdomain,
             domain=self.domain,
             endpoint=endpoint,
         )
@@ -75,6 +78,6 @@ class Client(object):
 
 
 client = Client(
-    subdomain=os.environ.get('MONTAGE_SUBDOMAIN'),
+    project=os.environ.get('MONTAGE_PROJECT'),
     token=os.environ.get('MONTAGE_TOKEN')
 )
