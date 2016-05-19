@@ -123,7 +123,7 @@ class PolicyAPITests(MontageTests):
         responses.add(responses.GET, endpoint, body=make_response(POLICY),
             content_type='application/json')
 
-        response = self.client.policy.list()
+        response = self.client.policies.list()
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -133,7 +133,7 @@ class PolicyAPITests(MontageTests):
         responses.add(responses.GET, endpoint, body=make_response(POLICY),
             content_type='application/json')
 
-        response = self.client.policy.get(POLICY['id'])
+        response = self.client.policies.get(POLICY['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -143,7 +143,7 @@ class PolicyAPITests(MontageTests):
         responses.add(responses.PATCH, endpoint, body=make_response(POLICY),
             content_type='application/json')
 
-        response = self.client.policy.update(POLICY['id'], description='Updated')
+        response = self.client.policies.update(POLICY['id'], description='Updated')
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -152,7 +152,7 @@ class PolicyAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/policy/{0}/'.format(POLICY['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.policy.remove(POLICY['id'])
+        response = self.client.policies.remove(POLICY['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 

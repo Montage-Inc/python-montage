@@ -73,7 +73,7 @@ class Client(object):
         return api.UserAPI(self)
 
     @cached_property
-    def policy(self):
+    def policies(self):
         return api.PolicyAPI(self)
 
 
