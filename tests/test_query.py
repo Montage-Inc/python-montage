@@ -142,6 +142,7 @@ class QueryFilterTests(MontageTests):
         )
 
         expected = {
+            '$type': 'query',
             '$schema': 'movies',
             '$query': [
                 ['$filter', {'predicate': (
@@ -159,6 +160,7 @@ class QueryFilterTests(MontageTests):
         )
 
         expected = {
+            '$type': 'query',
             '$schema': 'movies',
             '$query': [
                 ['$filter', {'predicate': (
@@ -179,6 +181,7 @@ class QueryFilterTests(MontageTests):
         )
 
         expected = {
+            '$type': 'query',
             '$schema': 'movies',
             '$query': [
                 ['$filter', {'predicate': (
