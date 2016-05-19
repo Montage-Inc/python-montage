@@ -128,10 +128,13 @@ class Query(object):
         if index is not None:
             params['index'] = index
         if ordering is not None:
-            params['ordering'] = {
-                'asc': '$asc',
-                'desc': '$desc',
-            }[ordering]
+            try:
+                params['ordering'] = {
+                    'asc': '$asc',
+                    'desc': '$desc',
+                }[ordering]
+            except KeyError:
+                raise ValueError('ordering must be "asc" or "desc".')
         return self._append('$order_by', **params)
 
     def skip(self, n):
