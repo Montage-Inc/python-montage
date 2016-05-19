@@ -92,6 +92,7 @@ class Query(object):
 
     def as_dict(self):
         return {
+            '$type': 'query',
             '$schema': self.schema,
             '$query': copy.deepcopy(self.terms)
         }
