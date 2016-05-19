@@ -76,7 +76,14 @@ class Query(object):
 
     @classmethod
     def NOT(cls, *args):
-        return ['$or', args]
+        return ['$not', args]
+
+    def _append(self, term, **kwargs):
+        if kwargs:
+            self.terms.append([term, kwargs])
+        else:
+            self.terms.append([term])
+        return self._clone()
 
     def _clone(self):
         query = type(self)(self.schema)
@@ -89,93 +96,94 @@ class Query(object):
             '$query': copy.deepcopy(self.terms)
         }
 
-    def get(self, id):
-        self.terms.append(['$get', id])
-        return self._clone()
+    # Selecting data
 
-    def get_all(self, *ids, **kwargs):
-        index = kwargs.pop('index', 'id')
-        self.terms.append(['$get_all', [index, ids]])
-        return self._clone()
+    def get(self, id):
+        return self._append('$get', key=id)
+
+    def get_all(self, *keys, **kwargs):
+        params = {'keys': keys}
+        if 'index' in kwargs:
+            params['index'] = kwargs['index']
+        return self._append('$get_all', **params)
 
     def filter(self, *filters):
-        self.terms.append(['$filter', filters])
-        return self._clone()
+        return self._append('$filter', predicate=filters)
+
+    def between(self, lower_key='$min', upper_key='$max', **kwargs):
+        return self._append('$between', lower_key=lower_key, upper_key=upper_key, **kwargs)
+
+    # Transformations
 
     def has_fields(self, *fields):
-        self.terms.append(['$has_fields', fields])
-        return self._clone()
+        return self._append('$has_fields', fields=fields)
 
     def with_fields(self, *fields):
-        self.terms.append(['$with_fields', fields])
-        return self._clone()
+        return self._append('$with_fields', fields=fields)
 
-    def order_by(self, field, ordering=None):
-        ordering = ordering or 'asc'
-        if ordering not in ('asc', 'desc'):
-            raise ValueError('.order_by ordering must be desc or asc')
-        self.terms.append(['$order_by', field, ordering])
-        return self._clone()
+    def order_by(self, key=None, index=None, ordering=None):
+        params = {}
+        if key is not None:
+            params['key'] = key
+        if index is not None:
+            params['index'] = index
+        if ordering is not None:
+            params['ordering'] = {
+                'asc': '$asc',
+                'desc': '$desc',
+            }[ordering]
+        return self._append('$order_by', **params)
 
-    def skip(self, num):
-        self.terms.append(['$skip', num])
-        return self._clone()
+    def skip(self, n):
+        return self._append('$skip', n=n)
 
-    def limit(self, num):
-        self.terms.append(['$limit', num])
-        return self._clone()
+    def limit(self, n):
+        return self._append('$limit', n=n)
 
-    def slice(self, start, end):
-        self.terms.append(['$slice', [start, end]])
-        return self._clone()
+    def slice(self, start_offset, end_offset=None, **kwargs):
+        if end_offset is not None:
+            kwargs['end_offset'] = end_offset
+        return self._append('$slice', start_offset=start_offset, **kwargs)
 
-    def nth(self, num):
-        self.terms.append(['$nth', num])
-        return self._clone()
+    def nth(self, n):
+        return self._append('$nth', n=n)
 
-    def sample(self, num):
-        self.terms.append(['$sample', num])
-        return self._clone()
+    def sample(self, n):
+        return self._append('$sample', n=n)
+
+    # Manipulation
 
     def pluck(self, *fields):
-        self.terms.append(['$pluck', fields])
-        return self._clone()
+        return self._append('$pluck', fields=fields)
 
     def without(self, *fields):
-        self.terms.append(['$without', fields])
-        return self._clone()
+        return self._append('$without', fields=fields)
+
+    # Aggregation
+
+    def group(self, **kwargs):
+        return self._append('$group', **kwargs)
 
     def count(self):
-        self.terms.append(['$count'])
-        return self._clone()
+        return self._append('$count')
 
     def sum(self, field):
-        self.terms.append(['$sum', field])
-        return self._clone()
+        return self._append('$sum', field=field)
 
     def avg(self, field):
-        self.terms.append(['$avg', field])
-        return self._clone()
+        return self._append('$avg', field=field)
 
     def min(self, field):
-        self.terms.append(['$min', field])
-        return self._clone()
+        return self._append('$min', field=field)
 
     def max(self, field):
-        self.terms.append(['$max', field])
-        return self._clone()
+        return self._append('$max', field=field)
 
-    def between(self, start, end, index=None):
-        value = [start, end] if index is None else [start, end, index]
-        self.terms.append(['$between', value])
-        return self._clone()
+    # Geospatial
 
     def get_intersecting(self, geometry, index):
-        value = [index, geometry]
-        self.terms.append(['$get_intersecting', value])
-        return self._clone()
+        return self._append('$get_intersecting', geometry=geometry, index=index)
 
-    def get_nearest(self, geometry, index):
-        value = [index, geometry]
-        self.terms.append(['$get_nearest', value])
-        return self._clone()
+    def get_nearest(self, geometry, index, **kwargs):
+        return self._append('$get_nearest', geometry=geometry, index=index, **kwargs)
+
