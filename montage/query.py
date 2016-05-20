@@ -111,7 +111,7 @@ class Query(object):
     def filter(self, *filters):
         return self._append('$filter', predicate=filters)
 
-    def between(self, lower_key='$min', upper_key='$max', **kwargs):
+    def between(self, lower_key='$minval', upper_key='$maxval', **kwargs):
         return self._append('$between', lower_key=lower_key, upper_key=upper_key, **kwargs)
 
     # Transformations
