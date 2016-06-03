@@ -5,6 +5,6 @@ __version__ = '2.0.0'
 __license__ = 'MIT License'
 
 from .client import Client, client
+from .command import Command
 from .errors import MontageError, HttpError
 from .query import Field, Query
-from .scripting import Script, RunLua

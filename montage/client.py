@@ -13,6 +13,7 @@ __all__ = ('Client', 'client')
 class Client(object):
     host = 'mntge.com'
     protocol = 'https'
+    timeout = 10
 
     def __init__(self, project, token=None):
         self.project = project
@@ -23,6 +24,7 @@ class Client(object):
         return '{0}.{1}'.format(self.project, self.host)
 
     def request(self, endpoint, method=None, **kwargs):
+        kwargs.setdefault('timeout', self.timeout)
         requestor = APIRequestor(self.token)
         return requestor.request(self.url(endpoint), method, **kwargs)
 

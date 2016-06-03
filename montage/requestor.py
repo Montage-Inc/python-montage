@@ -57,8 +57,6 @@ class APIRequestor(object):
             kwargs['data'] = self.encode(data)
             headers['Content-Type'] = 'application/json'
 
-        kwargs.setdefault('timeout', 10)
-
         response = requests.request(method, url, headers=headers, **kwargs)
 
         # Non-2xx responses get a generic HttpError. If we need to
