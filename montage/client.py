@@ -18,6 +18,7 @@ class Client(object):
     def __init__(self, project, token=None):
         self.project = project
         self.token = token
+        self.requestor = APIRequestor(self)
 
     @property
     def domain(self):
@@ -25,8 +26,7 @@ class Client(object):
 
     def request(self, endpoint, method=None, **kwargs):
         kwargs.setdefault('timeout', self.timeout)
-        requestor = APIRequestor(self.token)
-        return requestor.request(self.url(endpoint), method, **kwargs)
+        return self.requestor.request(self.url(endpoint), method, **kwargs)
 
     def url(self, endpoint):
         return '{protocol}://{domain}/api/v1/{endpoint}/'.format(

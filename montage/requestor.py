@@ -23,18 +23,25 @@ USER_AGENT = 'python-montage/{lib_ver} {py_impl}/{py_ver} {os}/{os_dist}'.format
 
 
 class APIRequestor(object):
-    def __init__(self, token=None):
-        self.token = token
+    def __init__(self, client=None):
+        self.client = client
+        self.session = self.make_session()
 
-    def get_headers(self):
-        headers = {
+    def make_session(self):
+        adapter = requests.adapters.HTTPAdapter(max_retries=5)
+        session = requests.Session()
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        session.headers.update({
             'Accept': 'application/json',
             'User-Agent': USER_AGENT,
-        }
+        })
+        return session
 
-        if self.token:
-            headers['Authorization'] = 'Token {0}'.format(self.token)
-
+    def get_headers(self):
+        headers = {}
+        if self.client.token:
+            headers['Authorization'] = 'Token {0}'.format(self.client.token)
         return headers
 
     def is_json(self, response):
@@ -53,11 +60,11 @@ class APIRequestor(object):
         headers.update(kwargs.pop('headers', {}))
 
         data = kwargs.pop('json', None)
-        if data:
+        if data is not None:
             kwargs['data'] = self.encode(data)
             headers['Content-Type'] = 'application/json'
 
-        response = requests.request(method, url, headers=headers, **kwargs)
+        response = self.session.request(method, url, headers=headers, **kwargs)
 
         # Non-2xx responses get a generic HttpError. If we need to
         # differentiate between 400's and 500's, we can do that at
