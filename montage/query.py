@@ -108,8 +108,11 @@ class Query(object):
             params['index'] = kwargs['index']
         return self._append('$get_all', **params)
 
-    def filter(self, *filters):
-        return self._append('$filter', predicate=filters)
+    def filter(self, *filters, **kwargs):
+        params = {'predicate': filters}
+        if 'default' in kwargs:
+            params['default'] = kwargs['default']
+        return self._append('$filter', **params)
 
     def between(self, lower_key='$minval', upper_key='$maxval', **kwargs):
         return self._append('$between', lower_key=lower_key, upper_key=upper_key, **kwargs)

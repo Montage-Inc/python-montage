@@ -194,3 +194,24 @@ class QueryFilterTests(MontageTests):
         }
 
         assert query.as_dict() == expected
+
+    def test_default(self):
+        query = montage.Query('movies').filter(
+            montage.Field('year') == 2000,
+            default=True
+        )
+
+        expected = {
+            '$type': 'query',
+            '$schema': 'movies',
+            '$query': [
+                ['$filter', {
+                    'predicate': (
+                        ['year', ['$eq', 2000]],
+                    ),
+                    'default': True
+                }]
+            ]
+        }
+
+        assert query.as_dict() == expected
