@@ -38,10 +38,11 @@ class APIRequestor(object):
         })
         return session
 
-    def get_headers(self):
+    def get_headers(self, **kwargs):
         headers = {}
         if self.client.token:
             headers['Authorization'] = 'Token {0}'.format(self.client.token)
+        headers.update(kwargs)
         return headers
 
     def is_json(self, response):
@@ -55,9 +56,7 @@ class APIRequestor(object):
 
     def request(self, url, method=None, **kwargs):
         method = method or 'get'
-
-        headers = self.get_headers()
-        headers.update(kwargs.pop('headers', {}))
+        headers = self.get_headers(**kwargs.pop('headers', {}))
 
         data = kwargs.pop('json', None)
         if data is not None:
@@ -77,8 +76,11 @@ class APIRequestor(object):
 
         # Success! Return the response content as JSON or text as needed.
         if self.is_json(response):
-            return self.decode(response.content)
-        return response.text
+            value = self.decode(response.content)
+        else:
+            value = response.text
+        del response
+        return value
 
     def get(self, url, **kwargs):
         return self.request(url, method='get', **kwargs)
