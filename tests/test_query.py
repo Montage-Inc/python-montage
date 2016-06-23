@@ -134,6 +134,13 @@ class QueryTests(MontageTests):
             'index': 'location'
         }]]
 
+    def test_delete(self):
+        query = montage.Query('movies').delete()
+        assert query.terms == [['$delete', {
+            'durability': 'hard',
+            'return_changes': False
+        }]]
+
 
 class QueryFilterTests(MontageTests):
     def test_ge(self):

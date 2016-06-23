@@ -194,3 +194,7 @@ class Query(object):
     def get_nearest(self, geometry, index, **kwargs):
         return self._append('$get_nearest', geometry=geometry, index=index, **kwargs)
 
+    # Delete
+
+    def delete(self, durability='hard', return_changes=False):
+        return self._append('$delete', durability=durability, return_changes=return_changes)
