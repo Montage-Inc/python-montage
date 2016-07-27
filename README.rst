@@ -25,35 +25,21 @@ Usage
     >>> client.user()
 
     # Querying and scripting
-    >>> query = montage.Query('schema')
-    >>> query = query.filter(**kwargs)
-    >>> query = query.limit(10)
-    >>> query = query.skip(10)
-    >>> query = query.order_by(field[, ordering=asc|desc])
-
-    >>> script = montage.Script('foobar.lua')
-
-    >>> evaluated = montage.RunLua('''
-    ...     function max(num1, num2)
-    ...
-    ...        if (num1 > num2) then
-    ...           result = num1;
-    ...        else
-    ...           result = num2;
-    ...        end
-    ...
-    ...        return result;
-    ...     end
-    ...
-    ...     return max(10, 4)
-    ... ''')
-
-    >>> client.run(query=query, foobar=script, max=evaluated)
+    >>> query = (montage.Query('movies')
+            .order_by(index='year')
+            .filter(
+                montage.Field('year') >= 1990
+                montage.Field('year') < 2000
+            )
+        )
+    >>> script = montage.Script('imdb/fetch-reviews.py', environ={
+            'IMDB_MIN_SCORE': 8
+        })
+    >>> client.run(nineties_movies=query, reviews=script)
     {
         "data": {
-            "query": [ ... ],
-            "foobar": " ... ",
-            "max": 10,
+            "nineties_movies": [ ... ],
+            "reviews": " ... ",
         }
     }
 
