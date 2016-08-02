@@ -78,6 +78,10 @@ class Client(object):
     def policies(self):
         return api.PolicyAPI(self)
 
+    @cached_property
+    def tasks(self):
+        return api.TaskAPI(self)
+
 
 client = Client(
     project=os.environ.get('MONTAGE_PROJECT'),
