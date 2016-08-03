@@ -71,6 +71,6 @@ class UserAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/users/1/'
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.users.remove(1)
+        response = self.client.users.delete(1)
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint

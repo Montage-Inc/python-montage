@@ -1,3 +1,6 @@
+import warnings
+
+
 class RoleAPI(object):
     def __init__(self, client):
         self.client = client
@@ -28,5 +31,10 @@ class RoleAPI(object):
             return self.client.request('roles/{0}'.format(role),
                 method='patch', json=payload)
 
-    def remove(self, role):
+    def delete(self, role):
         return self.client.request('roles/{0}'.format(role), method='delete')
+
+    def remove(self, role):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(role)

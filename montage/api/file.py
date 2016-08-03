@@ -1,4 +1,5 @@
 import mimetypes
+import warnings
 
 
 class FileAPI(object):
@@ -12,9 +13,14 @@ class FileAPI(object):
         endpoint = 'files/{0}'.format(file_id)
         return self.client.request(endpoint)
 
-    def remove(self, file_id):
+    def delete(self, file_id):
         endpoint = 'files/{0}'.format(file_id)
         return self.client.request(endpoint, method='delete')
+
+    def remove(self, file_id):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(file_id)
 
     def save(self, *files):
         '''
