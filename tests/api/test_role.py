@@ -38,6 +38,6 @@ class RoleAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/roles/{0}/'.format(ROLE['name'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.roles.remove(ROLE['name'])
+        response = self.client.roles.delete(ROLE['name'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
