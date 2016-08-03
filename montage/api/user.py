@@ -1,3 +1,6 @@
+import warnings
+
+
 class UserAPI(object):
     attributes = ('email', 'full_name', 'password')
 
@@ -31,5 +34,10 @@ class UserAPI(object):
             return self.client.request('users/{0}'.format(user_id),
                 method='patch', json=payload)
 
-    def remove(self, user_id):
+    def delete(self, user_id):
         return self.client.request('users/{0}'.format(user_id), method='delete')
+
+    def remove(self, user_id):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(user_id)
