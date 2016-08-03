@@ -1,3 +1,6 @@
+import warnings
+
+
 class DocumentAPI(object):
     def __init__(self, client):
         self.client = client
@@ -18,6 +21,11 @@ class DocumentAPI(object):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document['id'])
         return self.client.request(endpoint, method='patch', json=document)
 
-    def remove(self, schema, document_id):
+    def delete(self, schema, document_id):
         endpoint = 'schemas/{0}/documents/{1}'.format(schema, document_id)
         return self.client.request(endpoint, method='delete')
+
+    def remove(self, schema, document_id):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(schema, document_id)
