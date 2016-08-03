@@ -1,3 +1,6 @@
+import warnings
+
+
 class PolicyAPI(object):
     def __init__(self, client):
         self.client = client
@@ -26,8 +29,13 @@ class PolicyAPI(object):
             return self.client.request('policy/{0}'.format(policy_id),
                 method='patch', json=payload)
 
-    def remove(self, policy_id):
+    def delete(self, policy_id):
         return self.client.request('policy/{0}'.format(policy_id), method='delete')
+
+    def remove(self, policy_id):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(policy_id)
 
     def check_permission(self, action, resource=None):
         payload = {
