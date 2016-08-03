@@ -2,6 +2,12 @@ import responses
 from ..utils import MontageTests, make_response, SCHEMAS
 
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
+
 class SchemaAPITests(MontageTests):
     @responses.activate
     def test_schema_list(self):

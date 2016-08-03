@@ -3,6 +3,18 @@ import responses
 from ..utils import MontageTests, make_response, FILES
 
 
+try:
+    from cStringIO import StringIO
+except ImportError:
+    # Importing BytesIO as StringIO feels wrong...
+    from io import BytesIO as StringIO
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
+
 class FileAPITests(MontageTests):
     @responses.activate
     def test_file_list(self):
