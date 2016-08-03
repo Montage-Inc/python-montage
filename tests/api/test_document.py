@@ -20,6 +20,6 @@ class DocumentAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/documents/{1}/'.format('movies', doc['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.documents.remove('movies', doc['id'])
+        response = self.client.documents.delete('movies', doc['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
