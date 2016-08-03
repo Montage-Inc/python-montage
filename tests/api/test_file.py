@@ -16,6 +16,13 @@ except ImportError:
 
 
 class FileAPITests(MontageTests):
+    @classmethod
+    def file_path(cls):
+        return os.path.abspath(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '../files'
+        ))
+
     @responses.activate
     def test_file_list(self):
         endpoint = 'https://testco.hexxie.com/api/v1/files/'
@@ -55,8 +62,8 @@ class FileAPITests(MontageTests):
         responses.add(responses.POST, endpoint, body=make_response([FILES[0]]),
             content_type='application/json')
 
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files/python-powered.png')
-        response = self.client.files.save(('python-powered.png', open(path, 'rb')))
+        python = os.path.join(FileAPITests.file_path(), 'python-powered.png')
+        response = self.client.files.save(('python-powered.png', open(python, 'rb')))
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
 
@@ -66,10 +73,9 @@ class FileAPITests(MontageTests):
         responses.add(responses.POST, endpoint, body=make_response(FILES),
             content_type='application/json')
 
-        files_dir = os.path.dirname(os.path.abspath(__file__))
-        python = os.path.join(files_dir, 'files/python-powered.png')
-        django = os.path.join(files_dir, 'files/django-project.gif')
-        hello = os.path.join(files_dir, 'files/hello-world.txt')
+        python = os.path.join(FileAPITests.file_path(), 'python-powered.png')
+        django = os.path.join(FileAPITests.file_path(), 'django-project.gif')
+        hello = os.path.join(FileAPITests.file_path(), 'hello-world.txt')
 
         # Test multiple ways of passing in the file
         response = self.client.files.save(
