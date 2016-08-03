@@ -38,6 +38,6 @@ class PolicyAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/policy/{0}/'.format(POLICY['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.policies.remove(POLICY['id'])
+        response = self.client.policies.delete(POLICY['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
