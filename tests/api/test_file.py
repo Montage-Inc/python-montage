@@ -90,6 +90,6 @@ class FileAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/files/{0}/'.format(file['id'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        self.client.files.remove(file['id'])
+        self.client.files.delete(file['id'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
