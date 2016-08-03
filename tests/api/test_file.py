@@ -2,7 +2,6 @@ import os
 import responses
 from ..utils import MontageTests, make_response, FILES
 
-
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -15,14 +14,12 @@ except ImportError:
     from urlparse import urlparse
 
 
-class FileAPITests(MontageTests):
-    @classmethod
-    def file_path(cls):
-        return os.path.abspath(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '../files'
-        ))
+def get_file_path(filename):
+    path = os.path.join(os.path.dirname(__file__), '../files', filename)
+    return os.path.abspath(path)
 
+
+class FileAPITests(MontageTests):
     @responses.activate
     def test_file_list(self):
         endpoint = 'https://testco.hexxie.com/api/v1/files/'
@@ -62,7 +59,7 @@ class FileAPITests(MontageTests):
         responses.add(responses.POST, endpoint, body=make_response([FILES[0]]),
             content_type='application/json')
 
-        python = os.path.join(FileAPITests.file_path(), 'python-powered.png')
+        python = get_file_path('python-powered.png')
         response = self.client.files.save(('python-powered.png', open(python, 'rb')))
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
@@ -73,9 +70,9 @@ class FileAPITests(MontageTests):
         responses.add(responses.POST, endpoint, body=make_response(FILES),
             content_type='application/json')
 
-        python = os.path.join(FileAPITests.file_path(), 'python-powered.png')
-        django = os.path.join(FileAPITests.file_path(), 'django-project.gif')
-        hello = os.path.join(FileAPITests.file_path(), 'hello-world.txt')
+        python = get_file_path('python-powered.png')
+        django = get_file_path('django-project.gif')
+        hello = get_file_path('hello-world.txt')
 
         # Test multiple ways of passing in the file
         response = self.client.files.save(
