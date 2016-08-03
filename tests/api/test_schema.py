@@ -47,6 +47,6 @@ class SchemaAPITests(MontageTests):
         endpoint = 'https://testco.hexxie.com/api/v1/schemas/{0}/'.format(schema['name'])
         responses.add(responses.DELETE, endpoint, status=204)
 
-        response = self.client.schemas.remove(schema['name'])
+        response = self.client.schemas.delete(schema['name'])
         assert len(responses.calls) == 1
         assert responses.calls[0].request.url == endpoint
