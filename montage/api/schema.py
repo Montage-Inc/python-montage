@@ -1,3 +1,6 @@
+import warnings
+
+
 class SchemaAPI(object):
     def __init__(self, client):
         self.client = client
@@ -26,5 +29,10 @@ class SchemaAPI(object):
             return self.client.request('schemas/{0}'.format(schema),
                 method='patch', json=payload)
 
-    def remove(self, schema):
+    def delete(self, schema):
         return self.client.request('schemas/{0}'.format(schema), method='delete')
+
+    def remove(self, schema):
+        warnings.warn('The function remove() is deprecated, use delete().',
+        DeprecationWarning, stacklevel=2)
+        return self.delete(schema)
