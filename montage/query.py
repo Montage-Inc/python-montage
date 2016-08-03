@@ -1,5 +1,6 @@
 import copy
 import datetime
+import warnings
 
 __all__ = ('Query',)
 
@@ -132,13 +133,12 @@ class Query(object):
         if index is not None:
             params['index'] = index
         if ordering is not None:
-            try:
-                params['ordering'] = {
-                    'asc': '$asc',
-                    'desc': '$desc',
-                }[ordering]
-            except KeyError:
-                raise ValueError('ordering must be "asc" or "desc".')
+            if ordering in ('asc', 'desc'):
+                warnings.warn('Order_by asc/desc parameters deprecated; use $asc or $desc instead.', DeprecationWarning, stacklevel=2)
+                ordering = '${0}'.format(ordering)
+            elif ordering not in ('$asc', '$desc'):
+                raise ValueError('ordering must be $asc or $desc')
+            params['ordering'] = ordering
         return self._append('$order_by', **params)
 
     def skip(self, n):
