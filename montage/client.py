@@ -79,6 +79,10 @@ class Client(object):
         return api.PolicyAPI(self)
 
     @cached_property
+    def scheduler(self):
+        return api.SchedulerAPI(self)
+
+    @cached_property
     def tasks(self):
         return api.TaskAPI(self)
 

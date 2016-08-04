@@ -97,6 +97,14 @@ FILES = [{
     'checksum': 'b7e23ec29af22b0b4e41da31e868d57226121c84'
 }]
 
+SCHEDULED_TASKS = [
+    {
+        'id': '19d726b7-a754-4e5d-8d20-c47dbac0b2ae',
+        'crontab': '* * * * *',
+        'command': 'echo "hello, world"'
+    }
+]
+
 
 class MontageTests(unittest.TestCase):
     def setUp(self):
