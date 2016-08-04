@@ -56,7 +56,7 @@ class Client(object):
 
     @cached_property
     def documents(self):
-        return api.DocumentsAPI(self)
+        return api.DocumentAPI(self)
 
     @cached_property
     def files(self):
