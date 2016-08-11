@@ -4,9 +4,6 @@ import montage
 from .utils import MontageTests
 
 
-('date', 'time', 'year', 'month', 'day', 'hours', 'minutes',
-        'seconds', 'day_of_month', 'day_of_year', 'timezone')
-
 class ModifierTests(MontageTests):
     def test_date(self):
         field = montage.Field('birthday').date()
