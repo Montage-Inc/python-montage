@@ -14,4 +14,3 @@ class HttpError(MontageError):
     @property
     def status_code(self):
         return self.response.status_code
-
