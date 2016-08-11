@@ -8,8 +8,8 @@ __all__ = ('Query',)
 class Field(object):
     modifiers = ('date', 'time', 'year', 'month', 'day', 'hours', 'minutes',
         'seconds', 'day_of_month', 'day_of_year', 'timezone')
-    operators = ('eq', 'ne', 'lt', 'le', 'gt', 'ge', 'ieq', 'in', 'contains',
-        'regex', 'starts', 'istarts', 'ends', 'iends', 'intersects', 'includes')
+    operators = ('eq', 'ne', 'lt', 'le', 'gt', 'ge', 'ieq', 'in', 'match',
+        'starts', 'istarts', 'ends', 'iends', 'intersects', 'includes')
 
     def __init__(self, field):
         self.field = field
