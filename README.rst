@@ -2,12 +2,12 @@
 python-montage
 ==============
 
-.. image:: https://circleci.com/gh/EditLLC/python-montage/tree/feature%2fv2.svg?style=shield
-   :target: https://circleci.com/gh/EditLLC/python-montage/tree/feature%2fv2
+.. image:: https://circleci.com/gh/Montage-Inc/python-montage/tree/develop.svg?style=shield
+   :target: https://circleci.com/gh/Montage-Inc/python-montage/tree/develop
    :alt: CircleCI
 
-.. image:: https://codecov.io/github/EditLLC/python-montage/coverage.svg?branch=feature/v2
-   :target: https://codecov.io/github/EditLLC/python-montage?branch=feature/v2
+.. image:: https://codecov.io/github/Montage-Inc/python-montage/coverage.svg?branch=develop
+   :target: https://codecov.io/github/Montage-Inc/python-montage?branch=develop
    :alt: Coverage
 
 Python library for Montage
