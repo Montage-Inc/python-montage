@@ -77,15 +77,10 @@ class OperatorTests(MontageTests):
         expected = ['x', ['$in', 'y']]
         assert field.in_('y') == getattr(field, 'in')('y') == expected
 
-    def test_contains(self):
+    def test_match(self):
         field = montage.Field('x')
-        expected = ['x', ['$contains', 'y']]
-        assert field.contains('y') == expected
-
-    def test_regex(self):
-        field = montage.Field('x')
-        expected = ['x', ['$regex', '^y$']]
-        assert field.regex('^y$') == expected
+        expected = ['x', ['$match', '^y$']]
+        assert field.match('^y$') == expected
 
     def test_starts(self):
         field = montage.Field('x')
