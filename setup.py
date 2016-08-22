@@ -31,6 +31,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     install_requires=[
         'cached_property==1.3.0',
+        'jsonschema==2.5.1',
         'requests==2.9.1',
     ],
 )

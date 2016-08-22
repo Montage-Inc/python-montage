@@ -1,5 +1,5 @@
 
-__all__ = ('MontageError', 'HttpError')
+__all__ = ('MontageError', 'HttpError', 'ValidationError')
 
 
 class MontageError(Exception):
@@ -15,3 +15,7 @@ class HttpError(MontageError):
     @property
     def status_code(self):
         return self.response.status_code
+
+
+class ValidationError(MontageError):
+    pass
