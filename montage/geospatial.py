@@ -111,6 +111,7 @@ geojson_schema = jsonschema.Draft4Validator({
 
 
 def validate_geojson(geometry):
+    ''' Check that the given geometry is valid GeoJSON. '''
     try:
         geojson_schema.validate(geometry)
     except jsonschema.ValidationError as err:
@@ -119,6 +120,12 @@ def validate_geojson(geometry):
 
 
 def convert_polygon(geometry):
+    '''
+    Convert a MultiPolygon into a list of single Polygon objects.
+
+    For convenience, when working with mixed types, this also accepts
+    a single Polygon and wraps it in a list.
+    '''
     geometry = validate_geojson(geometry)
     results = []
     if geometry['type'] == 'Polygon':
