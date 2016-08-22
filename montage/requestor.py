@@ -71,8 +71,8 @@ class APIRequestor(object):
         if not (200 <= response.status_code <= 299):
             if self.is_json(response):
                 data = self.decode(response.content)
-                raise HttpError(response, data['errors'][0]['detail'])
-            raise HttpError(response, response.text)
+                raise HttpError(data['errors'][0]['detail'], response)
+            raise HttpError(response.text, response)
 
         # Success! Return the response content as JSON or text as needed.
         if self.is_json(response):

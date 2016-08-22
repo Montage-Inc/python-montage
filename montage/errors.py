@@ -3,13 +3,14 @@ __all__ = ('MontageError', 'HttpError')
 
 
 class MontageError(Exception):
-    pass
+    def __init__(self, message):
+        self.message = message
 
 
 class HttpError(MontageError):
-    def __init__(self, response, message):
+    def __init__(self, message, response):
         self.response = response
-        self.message = message
+        super(HttpError, self).__init__(message)
 
     @property
     def status_code(self):
