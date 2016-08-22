@@ -23,7 +23,6 @@ class GeospatialTests(MontageTests):
         }
         montage.geospatial.validate_geojson(geometry)
 
-
     def test_validate_geometry_decimal(self):
         geometry = {
             'type': 'Point',
