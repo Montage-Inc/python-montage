@@ -2,7 +2,9 @@ import copy
 import datetime
 import warnings
 
-__all__ = ('Query',)
+from .geospatial import validate_geojson
+
+__all__ = ('Query', 'Field')
 
 
 class Field(object):
@@ -189,9 +191,11 @@ class Query(object):
     # Geospatial
 
     def get_intersecting(self, geometry, index):
+        geometry = validate_geojson(geometry)
         return self._append('$get_intersecting', geometry=geometry, index=index)
 
     def get_nearest(self, geometry, index, **kwargs):
+        geometry = validate_geojson(geometry)
         return self._append('$get_nearest', geometry=geometry, index=index, **kwargs)
 
     # Delete
