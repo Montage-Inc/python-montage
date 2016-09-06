@@ -10,6 +10,12 @@ def make_response(data):
     return json.dumps({'data': data})
 
 
+PROJECT = {
+    'name': 'TestCo',
+    'subdomain': 'testco',
+}
+
+
 USER = {
     'id': 1,
     'full_name': 'Joe McTest',

@@ -15,14 +15,14 @@ class Client(object):
     protocol = 'https'
     timeout = 10
 
-    def __init__(self, project, token=None):
-        self.project = project
+    def __init__(self, subdomain, token=None):
+        self.subdomain = subdomain
         self.token = token
         self.requestor = APIRequestor(self)
 
     @property
     def domain(self):
-        return '{0}.{1}'.format(self.project, self.host)
+        return '{0}.{1}'.format(self.subdomain, self.host)
 
     def request(self, endpoint, method=None, **kwargs):
         kwargs.setdefault('timeout', self.timeout)
@@ -63,31 +63,35 @@ class Client(object):
         return api.FileAPI(self)
 
     @cached_property
-    def roles(self):
-        return api.RoleAPI(self)
-
-    @cached_property
-    def schemas(self):
-        return api.SchemaAPI(self)
-
-    @cached_property
-    def users(self):
-        return api.UserAPI(self)
-
-    @cached_property
     def policies(self):
         return api.PolicyAPI(self)
+
+    @cached_property
+    def project(self):
+        return api.ProjectAPI(self)
+
+    @cached_property
+    def roles(self):
+        return api.RoleAPI(self)
 
     @cached_property
     def scheduler(self):
         return api.SchedulerAPI(self)
 
     @cached_property
+    def schemas(self):
+        return api.SchemaAPI(self)
+
+    @cached_property
     def tasks(self):
         return api.TaskAPI(self)
 
+    @cached_property
+    def users(self):
+        return api.UserAPI(self)
+
 
 client = Client(
-    project=os.environ.get('MONTAGE_PROJECT'),
+    subdomain=os.environ.get('MONTAGE_SUBDOMAIN'),
     token=os.environ.get('MONTAGE_TOKEN')
 )
