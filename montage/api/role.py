@@ -8,7 +8,7 @@ class RoleAPI(object):
     def create(self, name, add_users=None):
         payload = {
             'name': name,
-            'add_users': users or []
+            'add_users': add_users or []
         }
         return self.client.request('roles', method='post', json=payload)
 

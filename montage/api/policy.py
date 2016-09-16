@@ -42,4 +42,4 @@ class PolicyAPI(object):
             'action': action,
             'resource': resource,
         }
-        return self.client.request('policy/check/', params=payload)
+        return self.client.request('policy/check', params=payload)
