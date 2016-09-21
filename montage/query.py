@@ -170,8 +170,14 @@ class Query(object):
 
     # Aggregation
 
-    def group(self, **kwargs):
-        return self._append('$group', **kwargs)
+    def group(self, field=None, index=None, multi=False):
+        if field is not None:
+            params['field'] = field
+        if index is not None:
+            params['index'] = index
+        if multi:
+            params['multi'] = multi
+        return self._append('$group', **params)
 
     def count(self):
         return self._append('$count')
