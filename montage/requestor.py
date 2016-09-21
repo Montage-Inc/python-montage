@@ -55,15 +55,7 @@ class APIRequestor(object):
         return JSONEncoder().encode(obj)
 
     def request(self, url, method=None, **kwargs):
-        method = method or 'get'
-        headers = self.get_headers(**kwargs.pop('headers', {}))
-
-        data = kwargs.pop('json', None)
-        if data is not None:
-            kwargs['data'] = self.encode(data)
-            headers['Content-Type'] = 'application/json'
-
-        response = self.session.request(method, url, headers=headers, **kwargs)
+        response = self.get_response(url, method, **kwargs)
 
         # Non-2xx responses get a generic HttpError. If we need to
         # differentiate between 400's and 500's, we can do that at
@@ -81,6 +73,17 @@ class APIRequestor(object):
             value = response.text
         del response
         return value
+
+    def get_response(self, url, method=None, **kwargs):
+        method = method or 'get'
+        headers = self.get_headers(**kwargs.pop('headers', {}))
+
+        data = kwargs.pop('json', None)
+        if data is not None:
+            kwargs['data'] = self.encode(data)
+            headers['Content-Type'] = 'application/json'
+
+        return self.session.request(method, url, headers=headers, **kwargs)
 
     def get(self, url, **kwargs):
         return self.request(url, method='get', **kwargs)
